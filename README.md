@@ -1,4 +1,4 @@
-# mern-base-ts
+# mern-base
 
 A streamlined MERN stack project generator with TypeScript integration. Creates a pre-configured development environment with Express backend and React frontend, featuring Tailwind CSS for styling.
 
