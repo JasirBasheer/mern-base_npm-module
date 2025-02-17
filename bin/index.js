@@ -28,7 +28,7 @@ function setupFrontend() {
 
   if (!safeExec('npm create vite@latest frontend -- --template react-ts')) return false;
   if (!safeExec('cd frontend && npm install')) return false;
-  if (!safeExec('cd frontend && npm install tailwindcss @tailwindcss/vite')) return false;
+  if (!safeExec('cd frontend && npm install tailwindcss @tailwindcss/vite postcss autoprefixer @tailwindcss/postcss')) return false;
 
   const tailwindConfig = `
   /** @type {import('tailwindcss').Config} */
@@ -48,19 +48,30 @@ function setupFrontend() {
     '@tailwindcss/postcss': {},
     autoprefixer: {},
   },
-}`;
+};`;
 
-  const viteConfig = `
-  import { defineConfig } from 'vite'
-  import react from '@vitejs/plugin-react'
-  import tailwindcss from '@tailwindcss/vite'
-  
-  export default defineConfig({
+  const viteConfig = `import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+
+export default defineConfig({
   plugins: [
-  react(),
-  tailwindcss()
+    tailwindcss(),
+    react()
   ]
 })`
+
+const appConfig = `import './App.css';
+
+function App() {
+  return (
+    <div className="flex items-center justify-center h-screen text-3xl font-bold">
+      <p >hello world</p>
+    </div>
+  );
+}
+
+export default App;`
 
   try {
     require('fs').writeFileSync(require('path').join('frontend', 'tailwind.config.ts'), tailwindConfig);
@@ -74,7 +85,8 @@ function setupFrontend() {
 
 
   try {
-    require('fs').writeFileSync(require('path').join('frontend', 'src', 'index.css'), `@import "tailwindcss`);
+    require('fs').writeFileSync(require('path').join('frontend', 'src', 'index.css'), `@import "tailwindcss"`);
+    require('fs').writeFileSync(require('path').join('frontend', 'src', 'App.tsx'), appConfig);
     console.log('✅ Updated frontend/src/index.css');
   } catch (error) {
     console.error('❌ Error updating index.css:', error.message);
