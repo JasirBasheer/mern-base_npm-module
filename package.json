@@ -1,6 +1,6 @@
 {
   "name": "mernbase-typescript-react",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "MERN Base with TypeScript, Vite, and Tailwind",
   "main": "index.js",
   "bin": {
