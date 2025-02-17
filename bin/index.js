@@ -1,4 +1,4 @@
-
+#!/usr/bin/env node
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
@@ -23,8 +23,6 @@ function safeExec(command, options = {}) {
   }
 }
 
-
-
 function setupFrontend() {
   console.log('\n💻 Setting up Frontend...');
 
@@ -32,17 +30,18 @@ function setupFrontend() {
   if (!safeExec('cd frontend && npm install')) return false;
   if (!safeExec('cd frontend && npm install tailwindcss @tailwindcss/vite')) return false;
 
-  const tailwindConfig = `/** @type {import('tailwindcss').Config} */
-export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
-  theme: {
+  const tailwindConfig = `
+  /** @type {import('tailwindcss').Config} */
+  export default {
+    content: [
+      "./index.html",
+      "./src/**/*.{js,ts,jsx,tsx}",
+    ],
+    theme: {
     extend: {},
-  },
-  plugins: [],
-}`;
+    },
+    plugins: [],
+  }`;
 
   const postcssConfig = `export default {
   plugins: {
@@ -51,31 +50,31 @@ export default {
   },
 }`;
 
-const viteConfig = `import { defineConfig } from 'vite'
-import tailwindcss from '@tailwindcss/vite'
-export default defineConfig({
+  const viteConfig = `
+  import { defineConfig } from 'vite'
+  import react from '@vitejs/plugin-react'
+  import tailwindcss from '@tailwindcss/vite'
+  
+  export default defineConfig({
   plugins: [
-    tailwindcss(),
-  ],
+  react(),
+  tailwindcss()
+  ]
 })`
 
   try {
-    fs.writeFileSync(path.join('frontend', 'tailwind.config.ts'), tailwindConfig);
-    fs.writeFileSync(path.join('frontend', 'postcss.config.ts'), postcssConfig);
-    fs.writeFileSync(path.join('frontend', 'vite.config.ts'), viteConfig);
-    fs.writeFileSync(path.join('frontend/src/', 'index.css'), '@import "tailwindcss');
+    require('fs').writeFileSync(require('path').join('frontend', 'tailwind.config.ts'), tailwindConfig);
+    require('fs').writeFileSync(require('path').join('frontend', 'postcss.config.ts'), postcssConfig);
+    require('fs').writeFileSync(require('path').join('frontend', 'vite.config.ts'), viteConfig);
     console.log('✅ Created Tailwind and PostCSS config files');
   } catch (error) {
     console.error('❌ Error creating config files:', error.message);
     return false;
   }
 
-  const cssContent = `@tailwind base;
-@tailwind components;
-@tailwind utilities;`;
 
   try {
-    fs.writeFileSync(path.join('frontend', 'src', 'index.css'), cssContent);
+    require('fs').writeFileSync(require('path').join('frontend', 'src', 'index.css'), `@import "tailwindcss`);
     console.log('✅ Updated frontend/src/index.css');
   } catch (error) {
     console.error('❌ Error updating index.css:', error.message);
@@ -84,7 +83,6 @@ export default defineConfig({
 
   return true;
 }
-
 
 
 
