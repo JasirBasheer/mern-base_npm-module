@@ -30,7 +30,7 @@ function setupFrontend() {
 
   if (!safeExec('npm create vite@latest frontend -- --template react-ts')) return false;
   if (!safeExec('cd frontend && npm install')) return false;
-  if (!safeExec('cd frontend && npm install -D tailwindcss postcss autoprefixer @tailwindcss/postcss')) return false;
+  if (!safeExec('cd frontend && npm install tailwindcss @tailwindcss/vite')) return false;
 
   const tailwindConfig = `/** @type {import('tailwindcss').Config} */
 export default {
@@ -51,9 +51,19 @@ export default {
   },
 }`;
 
+const viteConfig = `import { defineConfig } from 'vite'
+import tailwindcss from '@tailwindcss/vite'
+export default defineConfig({
+  plugins: [
+    tailwindcss(),
+  ],
+})`
+
   try {
-    fs.writeFileSync(path.join('frontend', 'tailwind.config.js'), tailwindConfig);
-    fs.writeFileSync(path.join('frontend', 'postcss.config.js'), postcssConfig);
+    fs.writeFileSync(path.join('frontend', 'tailwind.config.ts'), tailwindConfig);
+    fs.writeFileSync(path.join('frontend', 'postcss.config.ts'), postcssConfig);
+    fs.writeFileSync(path.join('frontend', 'vite.config.ts'), viteConfig);
+    fs.writeFileSync(path.join('frontend/src/', 'index.css'), '@import "tailwindcss');
     console.log('✅ Created Tailwind and PostCSS config files');
   } catch (error) {
     console.error('❌ Error creating config files:', error.message);
